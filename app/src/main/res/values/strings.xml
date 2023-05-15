@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Roadtriip</string>
+    <string name="global_ok">OK</string>
+    <string name="global_cancel">Cancel</string>
+</resources>
