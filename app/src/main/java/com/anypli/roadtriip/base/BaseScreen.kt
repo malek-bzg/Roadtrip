@@ -1,9 +1,10 @@
 package com.anypli.roadtriip.base
 
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,18 +20,15 @@ import com.anypli.roadtriip.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-
-
-
-
 @Composable
-fun <T : BaseViewModel> BaseScreen(
-    viewModel: T,
-    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
-    navigationCallback: (Navigation) -> Unit,
-    body: @Composable (Modifier) -> Unit,
 
-) {
+fun <T : BaseViewModel> BaseScreen(
+    viewModel: T ,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() } ,
+    navigationCallback: (Navigation) -> Unit ,
+    body: @Composable (Modifier) -> Unit ,
+
+    ) {
     val coroutineScope = rememberCoroutineScope()
     RoadtriipTheme {
         // Collecter le StateFlow de BaseViewModel
@@ -64,10 +62,6 @@ fun SnackBarObserver(baseStateContent: BaseStateContent<TypeMessage> , coroutine
     baseStateContent.let {
         val message = it.content.convertToString()
         LaunchedEffect(key1 = baseStateContent) {
-            // Show snackbar using a coroutine, when the coroutine is cancelled the
-            // snackbar will automatically dismiss. This coroutine will cancel whenever
-            // `snackBarMessage.isNotEmpty()` is false, and only start when `snackBarMessage.isNotEmpty()` is true
-            // (due to the above if-check), or if `scaffoldState.snackbarHostState` changes.
             coroutineScope.launch {
                 onSnackBarDisplayed(it.id)
                 snackbarHostState.currentSnackbarData?.dismiss()
@@ -86,7 +80,6 @@ fun NavigationObserver(navigation: BaseStateContent<Navigation>,navigationCallba
     LaunchedEffect(navigation) {
 
         navigationCallback.invoke(navigation.content)
-
 
     }
 
@@ -114,7 +107,8 @@ fun SimpleDialogObserver( simpleDialog:SimpleDialog ) {
                  simpleDialog.dismissActionBlock?.invoke()
 
             },
-            title = { Text(simpleDialog.message.convertToString()) },
+            title = { simpleDialog.title?.let { Text(it.convertToString()) }
+            },
             text = { Text(simpleDialog.message.convertToString()) },
             confirmButton = {
                 Button(onClick = {
@@ -130,18 +124,13 @@ fun SimpleDialogObserver( simpleDialog:SimpleDialog ) {
 fun ChooseDialogObserver(simpleDialog: ChooseDialog) {
     val openDialog = remember { mutableStateOf(true) }
 
-    if (openDialog.value) {
-        AlertDialog(
-            onDismissRequest = {
 
-                openDialog.value = false
-            },
-            title = {
-                 Text(simpleDialog.title?.convertToString()?:"")
-            },
-            text = {
-                Text(simpleDialog.message.convertToString())
-            },
+        AlertDialog(
+            onDismissRequest = { simpleDialog.dismissActionBlock?.invoke()},
+
+            title = { Text(simpleDialog.message.convertToString()) },
+            text = { Text(simpleDialog.message.convertToString()) },
+
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -162,38 +151,6 @@ fun ChooseDialogObserver(simpleDialog: ChooseDialog) {
             }
         )
     }
-
-}
-
-
-
-//@Preview
-//@Composable
-//fun button () {
-//    var count by remember { mutableStateOf(0) }
-//    //var isLoading by remember { mutableStateOf(false) }
-//
-//    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-//        Button(
-//            onClick = {
-//
-//                // Simulate long operation
-//
-//                    count += 1
-//
-//
-//            },
-//            modifier = Modifier
-//                .align(Alignment.BottomCenter)
-//                .padding(16.dp)
-//        ) {
-//            Text(text = count.toString())
-//        }
-//        LoaderProgressBar()
-//
-//    }
-//}
-
 
 
 

@@ -8,13 +8,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -23,7 +18,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -31,32 +28,103 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.anypli.roadtriip.ui.Visibility
 import com.anypli.roadtriip.R
 import com.anypli.roadtriip.base.BaseScreen
+import com.anypli.roadtriip.global.helper.Navigation
+import com.anypli.roadtriip.global.utilities.fontDimensionResource
 import com.anypli.roadtriip.ui.VisibilityOff
-import com.anypli.roadtriip.ui.signin.SigninViewModel
+import com.anypli.roadtriip.ui.main.AppNavigator
+import com.anypli.roadtriip.ui.shared.component.GlobalOutlinedTextField
+import com.anypli.roadtriip.ui.shared.component.GlobalPasswordOutlinedTextField
+import com.anypli.roadtriip.ui.shared.component.GradientButton
+import com.anypli.roadtriip.ui.shared.theme.*
+import com.anypli.roadtriip.ui.signin.SigninScreen
 
 @Composable
 fun SignupScreen(
 
-    viewModel: SignupViewModel
-    //navigator: DestinationsNavigator
+    viewModel: SignupViewModel,
+    navigator: AppNavigator
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
+    val name by viewModel.name.collectAsState()
+    val phoneNumber by viewModel.phoneNumber.collectAsState()
+    val email by viewModel.email.collectAsState()
+    val password by viewModel.password.collectAsState()
+    val passwordHidden by viewModel.passwordHidden.collectAsState()
+    val confirmPassword by viewModel.confirmPassword.collectAsState()
+    val errorMail by viewModel.errorMail.collectAsState()
+    val errorPass by viewModel.errorPass.collectAsState()
+    val errorName by viewModel.errorName.collectAsState()
+    val errorphone by viewModel.errorphone.collectAsState()
+    val errorConfirmPass by viewModel.errorConfirmPass.collectAsState()
+
+
 
 
     BaseScreen(
         viewModel = viewModel,
-        navigationCallback = {},
+        navigationCallback = {if (it is Navigation.SigninScreen)
+            navigator.navigateTo(Navigation.SigninScreen)
+
+        else if (it is Navigation.ResetPassScreen)
+            navigator.navigateTo(Navigation.ResetPassScreen)
+        },
         snackbarHostState = snackbarHostState
     ) { modifier ->
         SignupScreen(
-
             snackbarHostState = snackbarHostState,
-            modifier = modifier
+            modifier = modifier,
+            name = name,
+            phoneNumber = phoneNumber,
+            email = email ,
+            password = password,
+            passwordHidden = passwordHidden ,
+            confirmPassword = confirmPassword,
+            errorMail = errorMail,
+            errorPass=errorPass,
+            errorName = errorName,
+            errorphone=errorphone,
+            errorConfirmPass =errorConfirmPass,
+
+
+
+
+            onNameChange = {
+                viewModel.onNameChange(it)
+            },
+            onPhoneChange = {
+                viewModel.onPhoneChange(it)
+            },
+            onEmailChange = {
+                viewModel.onEmailChange(it)
+            },
+            onPasswordChange = {
+                viewModel.onPasswordChange(it)
+            },
+            onPasswordHiddenChange ={
+                viewModel.onPasswordHiddenChange(it)
+            },
+            onConfirmPasswordChange ={
+                viewModel.onConfirmPasswordChange(it)
+            },
+
+            onSigninClicked ={
+                viewModel.onSigninClicked()
+            },
+            onResetPasswordClicked ={
+                viewModel.onResetPasswordClicked()
+            },
+            onRegisterClicked ={
+                viewModel.onRegisterClicked()
+            },
+
+
+
+
+
+
         )
     }
 }
@@ -65,13 +133,33 @@ fun SignupScreen(
 private fun SignupScreen(
     snackbarHostState : SnackbarHostState = remember { SnackbarHostState() } ,
     modifier: Modifier ,
+    name: String,
+    phoneNumber: String,
+    email : String,
+    password: String ,
+    confirmPassword: String,
+    onPasswordChange:(String)->Unit ,
+    onNameChange:(String)->Unit ,
+    onPhoneChange:(String)->Unit,
+    onEmailChange:(String)->Unit ,
+    onConfirmPasswordChange:(String)->Unit ,
+    passwordHidden: Boolean ,
+    onPasswordHiddenChange:(Boolean)->Unit ,
+    onSigninClicked: () -> Unit,
+    onRegisterClicked: () -> Unit,
+    onResetPasswordClicked: () -> Unit,
+    errorMail: Int? ,
+    errorPass: Int? ,
+    errorName: Int? ,
+    errorphone: Int? ,
+    errorConfirmPass : Int?,
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .fillMaxHeight()
             .background(
-                color = Color.Transparent ,
+                color = RoadtriipTheme.colors.transparent ,
             )
     ) {
         Image(painter = painterResource(id = R.drawable.ic_shape), contentDescription = "",
@@ -93,13 +181,13 @@ private fun SignupScreen(
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
-                    .height(220.dp)
+                    .height(dimensionResource(R.dimen.global_logo_height))
                     .fillMaxWidth(),
 
                 )
             Column(
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(dimensionResource(R.dimen.margin_global_16dp))
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
                 ,
@@ -108,88 +196,76 @@ private fun SignupScreen(
             ) {
 
                 //.........................Spacer
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.dimen_global_30)))
 
                 //.........................Text: title
                 androidx.compose.material3.Text(
-                    text = "Create An Account",
+                    text = stringResource(R.string.create_an_account),
                     textAlign = TextAlign.Center,
                     modifier = Modifier
-                        .padding(top = 130.dp)
+                        .padding(top = dimensionResource(R.dimen.dimen_global_130))
                         .fillMaxWidth(),
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = RoadtriipTheme.typography.fontSize24spBLack,
                     color = Color.Black,
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                RegisterName()
+                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.margin_global_8dp)))
+                RegisterName(name, onNameChange , errorName)
 
-                Spacer(modifier = Modifier.padding(3.dp))
-                RegisterPhone()
+                Spacer(modifier = Modifier.padding(dimensionResource(R.dimen.margin_global_3dp)))
+                RegisterPhone(phoneNumber , onPhoneChange , errorphone )
 
-                Spacer(modifier = Modifier.padding(3.dp))
-                RegisterEmail()
+                Spacer(modifier = Modifier.padding(dimensionResource(R.dimen.margin_global_3dp)))
+                RegisterEmail(email, onEmailChange , errorMail)
 
-                Spacer(modifier = Modifier.padding(3.dp))
-                RegisterPassword()
+                Spacer(modifier = Modifier.padding(dimensionResource(R.dimen.margin_global_3dp)))
+                RegisterPassword(password, onPasswordChange , passwordHidden , onPasswordHiddenChange,errorPass)
 
-                Spacer(modifier = Modifier.padding(3.dp))
-                RegisterPasswordConfirm()
+                Spacer(modifier = Modifier.padding(dimensionResource(R.dimen.margin_global_3dp)))
+                RegisterPasswordConfirm(confirmPassword, onConfirmPasswordChange, passwordHidden, onPasswordHiddenChange , errorConfirmPass)
 
-                val gradientColor = listOf(Color(0xFFF3CD3F) , Color(0xFFDBB41F))
-                val cornerRadius = 16.dp
+                val gradientColor = listOf(RoadtriipTheme.colors.yeloows ,RoadtriipTheme.colors.yeloowsc)
+                val cornerRadius =  dimensionResource(R.dimen.margin_global_16dp)
 
 
-                Spacer(modifier = Modifier.padding(10.dp))
-                /* Button(
-                     onClick = {},
-                     modifier = Modifier
-                         .fillMaxWidth(0.8f)
-                         .height(50.dp)
-                 ) {
-                     Text(text = "Login", fontSize = 20.sp)
-                 }*/
+                Spacer(modifier = Modifier.padding(dimensionResource(R.dimen.margin_global_10dp)))
+
                 GradientButton(
                     gradientColors = gradientColor,
                     cornerRadius = cornerRadius,
-                    nameButton = "Create An Account",
-                    roundedCornerShape = RoundedCornerShape(topStart = 30.dp,bottomEnd = 30.dp)
+                    nameButton = stringResource(R.string.create_an_account),
+                    roundedCornerShape = RoadtriipTheme.shapes.radiusShape30dp,
+                    onClick = {
+                        onRegisterClicked()
+                    }
                 )
 
-                Spacer(modifier = Modifier.padding(10.dp))
+                Spacer(modifier = Modifier.padding(dimensionResource(R.dimen.margin_global_10dp)))
                 androidx.compose.material3.TextButton(onClick = {
-//                    navController.navigate("login_page"){
-//                        popUpTo(navController.graph.startDestinationId)
-//                        launchSingleTop = true
-//                    }
+                    onSigninClicked()
 
                 }) {
                     androidx.compose.material3.Text(
-                        color = Color.Black,
-                        text = "Sign In",
-                        letterSpacing = 1.sp,
-                        style = MaterialTheme.typography.labelLarge
+                        color = RoadtriipTheme.colors.black,
+                        text = stringResource(R.string.sign_in),
+                        letterSpacing = fontDimensionResource(R.dimen.font_1sp) ,
+                        style = RoadtriipTheme.typography.fontSize14spBLack
                     )
                 }
 
 
-                Spacer(modifier = Modifier.padding(5.dp))
+                Spacer(modifier = Modifier.padding(dimensionResource(R.dimen.margin_global_5dp)))
                 androidx.compose.material3.TextButton(onClick = {
-
-//                    navController.navigate("reset_page"){
-//                        popUpTo(navController.graph.startDestinationId)
-//                        launchSingleTop = true
-//                    }
-
+                    onResetPasswordClicked()
 
                 }) {
                     androidx.compose.material3.Text(
-                        color = Color.Black,
-                        text = "Reset Password",
-                        letterSpacing = 1.sp,
-                        style = MaterialTheme.typography.labelLarge,
+                        color = RoadtriipTheme.colors.black,
+                        text = stringResource(R.string.reset_password),
+                        letterSpacing = fontDimensionResource(R.dimen.font_1sp),
+                        style = RoadtriipTheme.typography.fontSize14spBLack,
                     )
                 }
-                Spacer(modifier = Modifier.padding(20.dp))
+                Spacer(modifier = Modifier.padding(dimensionResource(R.dimen.margin_global_20dp)))
 
             }
 
@@ -200,254 +276,147 @@ private fun SignupScreen(
 
 
 }
-
-
-//...........................................................................
-@Composable
-private fun GradientButton(
-    gradientColors: List<Color>,
-    cornerRadius: Dp,
-    nameButton: String,
-    roundedCornerShape: RoundedCornerShape
-) {
-
-    androidx.compose.material3.Button(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 32.dp , end = 32.dp),
-        onClick = {
-            //your code
-        },
-
-        contentPadding = PaddingValues(),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent
-        ),
-        shape = RoundedCornerShape(cornerRadius)
-    ) {
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    brush = Brush.horizontalGradient(colors = gradientColors) ,
-                    shape = roundedCornerShape
-                )
-                .clip(roundedCornerShape)
-                /*.background(
-                    brush = Brush.linearGradient(colors = gradientColors),
-                    shape = RoundedCornerShape(cornerRadius)
-                )*/
-                .padding(horizontal = 16.dp , vertical = 8.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            androidx.compose.material3.Text(
-                text = nameButton,
-                fontSize = 20.sp,
-                color = Color.White
-
-            )
-        }
-    }
-}
-
-
 //name
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class , ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterName() {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    var text by rememberSaveable { mutableStateOf("") }
-
-    OutlinedTextField(
-        value = text,
-        onValueChange = { text = it },
-        shape = RoundedCornerShape(topEnd =12.dp, bottomStart =12.dp),
-        label = {
-            Text("Name",
-                color = Color.Black,
-                style = MaterialTheme.typography.labelMedium,
-            ) },
-        placeholder = { Text(text = "Name") },
+fun RegisterName(name: String, onNameChange: (String) -> Unit, errorName: Int? = null ) {
+    GlobalOutlinedTextField(
+        value = name ,
+        onValueChange = onNameChange  ,
+        label = stringResource(R.string.name) ,
+        placeholder = stringResource(
+            R.string.name
+        ),
         keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Next,
             keyboardType = KeyboardType.Text
-        ),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = Color.Black,
-            unfocusedBorderColor = Color.Black),
+        ) ,
         singleLine = true,
-        modifier = Modifier.fillMaxWidth(0.8f),
-        keyboardActions = KeyboardActions(
-            onDone = {
-                keyboardController?.hide()
-                // do something here
-            }
-        )
-
+        errorMessage = errorName?.let {
+            stringResource(id = it)
+        }
     )
 }
 
 
 //phone
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class , ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterPhone() {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    var text by rememberSaveable { mutableStateOf("") }
+fun RegisterPhone(phoneNumber : String , onPhoneChange :(String) -> Unit , errorphone: Int? = null ) {
 
-    OutlinedTextField(
-        value = text,
-        onValueChange = { text = it },
-        shape = RoundedCornerShape(topEnd =12.dp, bottomStart =12.dp),
-        label = {
-            Text("Phone",
-                color = Color.Black,
-                style = MaterialTheme.typography.labelMedium,
-            ) },
-        placeholder = { Text(text = "Phone") },
+    GlobalOutlinedTextField(
+        value = phoneNumber ,
+        onValueChange = onPhoneChange  ,
+        label = stringResource(R.string.phone) ,
+        placeholder = stringResource(
+            R.string.phone
+        ),
         keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Next,
             keyboardType = KeyboardType.Phone
-        ),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = Color.Black,
-            unfocusedBorderColor = Color.Black),
+        ) ,
         singleLine = true,
-        modifier = Modifier.fillMaxWidth(0.8f),
-        keyboardActions = KeyboardActions(
-            onDone = {
-                keyboardController?.hide()
-                // do something here
-            }
-        )
-
+        errorMessage = errorphone?.let {
+            stringResource(id = it)
+        }
     )
+
 }
 
 
 //email id
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class , ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterEmail() {
+fun RegisterEmail(email: String, onEmailChange: (String) -> Unit, errorMail: Int? = null ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    var text by rememberSaveable { mutableStateOf("") }
 
-    OutlinedTextField(
-        value = text,
-        onValueChange = { text = it },
-        shape = RoundedCornerShape(topEnd =12.dp, bottomStart =12.dp),
-        label = {
-            Text("Email Address",
-                color = Color.Black,
-                style = MaterialTheme.typography.labelMedium,
-            ) },
-        placeholder = { Text(text = "Email Address") },
+    GlobalOutlinedTextField(
+        value = email ,
+        onValueChange = onEmailChange  ,
+        label = stringResource(R.string.email_address) ,
+        placeholder = stringResource(
+            R.string.email_address
+        ),
         keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Next,
             keyboardType = KeyboardType.Email
-        ),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = Color.Black,
-            unfocusedBorderColor = Color.Black),
+        ) ,
         singleLine = true,
-        modifier = Modifier.fillMaxWidth(0.8f),
-        keyboardActions = KeyboardActions(
-            onDone = {
-                keyboardController?.hide()
-                // do something here
-            }
-        )
-
+        errorMessage = errorMail?.let {
+            stringResource(id = it)
+        }
     )
 }
 
 //password
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class , ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterPassword() {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    var password by rememberSaveable { mutableStateOf("") }
-    var passwordHidden by rememberSaveable { mutableStateOf(true) }
-    OutlinedTextField(
-        value = password,
-        onValueChange = { password = it },
-        shape = RoundedCornerShape(topEnd =12.dp, bottomStart =12.dp),
-        label = {
-            Text("Enter Password",
-                color = Color.Black,
-                style = MaterialTheme.typography.labelMedium,
-            ) },
-        visualTransformation =
-        if (passwordHidden) PasswordVisualTransformation() else VisualTransformation.None,
-        //  keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+fun RegisterPassword(password: String , onPasswordChange: (String) -> Unit ,passwordHidden: Boolean , onPasswordHiddenChange: (Boolean) -> Unit, errorPass: Int? = null) {
+    GlobalPasswordOutlinedTextField(
+        errorPass = errorPass?.let {
+            stringResource(id = it)
+        },
+        value = password ,
+        onValueChange = onPasswordChange ,
+        label = stringResource(R.string.enter_password) ,
+        passwordHidden = passwordHidden,
+        onPasswordHiddenChange = onPasswordHiddenChange ,
         keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Next,
-            keyboardType = KeyboardType.Password
-        ),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = Color.Black,
-            unfocusedBorderColor = Color.Black),
-        trailingIcon = {
-            IconButton(onClick = { passwordHidden = !passwordHidden }) {
-                val visibilityIcon =
-                    if (passwordHidden) Visibility else VisibilityOff
-                // Please provide localized description for accessibility services
-                val description = if (passwordHidden) "Show password" else "Hide password"
-                Icon(imageVector = visibilityIcon, contentDescription = description)
-            }
-        },
-        modifier = Modifier.fillMaxWidth(0.8f),
-        keyboardActions = KeyboardActions(
-            onDone = {
-                keyboardController?.hide()
-                // do something here
-            }
+            keyboardType = KeyboardType.Text
+        ) ,
+        singleLine = true,
+
         )
-    )
 }
 
 //password confirm
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class , ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterPasswordConfirm() {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    var password by rememberSaveable { mutableStateOf("") }
-    var passwordHidden by rememberSaveable { mutableStateOf(true) }
-    OutlinedTextField(
-        value = password,
-        onValueChange = { password = it },
-        shape = RoundedCornerShape(topEnd =12.dp, bottomStart =12.dp),
-        label = {
-            Text("Confirm Password",
-                color = Color.Black,
-                style = MaterialTheme.typography.labelMedium,
-            ) },
-        visualTransformation =
-        if (passwordHidden) PasswordVisualTransformation() else VisualTransformation.None,
-        //  keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+fun RegisterPasswordConfirm(confirmPassword: String , onConfirmPasswordChange: (String) -> Unit ,passwordHidden: Boolean , onPasswordHiddenChange: (Boolean) -> Unit, errorConfirmPass: Int? = null) {
+    GlobalPasswordOutlinedTextField(
+
+        value = confirmPassword ,
+        onValueChange = onConfirmPasswordChange ,
+        label = stringResource(R.string.confirm_password) ,
+        passwordHidden = passwordHidden,
+        onPasswordHiddenChange = onPasswordHiddenChange ,
         keyboardOptions = KeyboardOptions(
-            imeAction = ImeAction.Done,
-            keyboardType = KeyboardType.Password
-        ),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor =Color.Black,
-            unfocusedBorderColor = Color.Black),
-        trailingIcon = {
-            IconButton(onClick = { passwordHidden = !passwordHidden }) {
-                val visibilityIcon =
-                    if (passwordHidden) Visibility else VisibilityOff
-                // Please provide localized description for accessibility services
-                val description = if (passwordHidden) "Show password" else "Hide password"
-                Icon(imageVector = visibilityIcon, contentDescription = description)
-            }
+            imeAction = ImeAction.Next,
+            keyboardType = KeyboardType.Text
+        ) ,
+        singleLine = true,
+        errorPass = errorConfirmPass?.let {
+            stringResource(id = it)
         },
-        modifier = Modifier.fillMaxWidth(0.8f),
-        keyboardActions = KeyboardActions(
-            onDone = {
-                keyboardController?.hide()
-                // do something here
-            }
+
         )
+}
+@Preview
+@Composable
+fun SignupScreenPreview() {
+    SignupScreen(
+        modifier = Modifier ,
+        name = "name" ,
+        phoneNumber = "phoneNumber" ,
+        email = "email" ,
+        passwordHidden = false,
+        password = "password" ,
+        confirmPassword = "confirmPassword" ,
+        onPasswordChange = {} ,
+        onNameChange = {} ,
+        onEmailChange = {} ,
+        onPhoneChange = {} ,
+        onConfirmPasswordChange = {},
+        onPasswordHiddenChange = {},
+        onSigninClicked = {},
+        onRegisterClicked = {},
+        onResetPasswordClicked = {},
+        errorMail = R.string.empty,
+        errorPass = R.string.empty,
+        errorName = R.string.empty,
+        errorphone = R.string.empty,
+        errorConfirmPass=R.string.empty
+
     )
 }

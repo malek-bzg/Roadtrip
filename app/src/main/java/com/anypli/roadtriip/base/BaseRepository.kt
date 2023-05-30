@@ -1,12 +1,8 @@
 package com.anypli.roadtriip.base
 
 import ApiClientUtility
-import androidx.lifecycle.ViewModel
-import com.anypli.roadtriip.data.preferences.abs.Prefrences
-import com.anypli.roadtriip.data.preferences.impl.PreferencesImpl
 import com.anypli.roadtriip.data.retrofit.ApiClient
 import com.anypli.roadtriip.di.PreferencesUtility
-import java.util.prefs.Preferences
 
 
 abstract class BaseRepository() {
@@ -15,7 +11,7 @@ abstract class BaseRepository() {
 
 
     //La propriété preferences est initialisée en appelant la méthode getPreferences() de l'objet PreferencesUtility
-    protected val preferences: Prefrences = PreferencesUtility.getPreferences()
+    protected val preferences: com.anypli.roadtriip.data.preferences.abs.Preferences = PreferencesUtility.getPreferences()
 
 }
 

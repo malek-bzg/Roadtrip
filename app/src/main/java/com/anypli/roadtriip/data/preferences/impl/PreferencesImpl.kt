@@ -3,12 +3,11 @@ package com.anypli.roadtriip.data.preferences.impl
 import android.content.Context
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
-import com.anypli.roadtriip.RoadTripApplication
 //import com.anypli.roadtriip.RoadTripApplication
-import com.anypli.roadtriip.data.preferences.abs.Prefrences
+import com.anypli.roadtriip.data.preferences.abs.Preferences
 
 
-class PreferencesImpl(private val context: Context) : Prefrences {
+class PreferencesImpl( context: Context) : Preferences {
 
     private val mainKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
     private val sharedPreferences = EncryptedSharedPreferences.create(

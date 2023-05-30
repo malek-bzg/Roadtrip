@@ -1,17 +1,19 @@
 package com.anypli.roadtriip
+import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.lifecycle.ViewModelProvider.NewInstanceFactory.Companion.instance
 
-class RoadTripApplication: ComponentActivity() {
+class RoadTripApplication: Application() {
     companion object {
-          private var instance: RoadTripApplication ? = null
+          private lateinit var instance: RoadTripApplication
         fun getInstance(): RoadTripApplication{
-            return instance !!
+            return instance
         }
     }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        instance = RoadTripApplication()
+    override fun onCreate() {
+        super.onCreate()
+        instance = this
 
 
 

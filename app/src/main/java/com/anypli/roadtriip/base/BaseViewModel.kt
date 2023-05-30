@@ -11,8 +11,6 @@ import kotlinx.coroutines.flow.StateFlow
 
 abstract class BaseViewModel : ViewModel() {
 
-
-
     //for blocking progress bar
     private val _progressBar: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val progressBar: StateFlow<Boolean>
@@ -46,6 +44,79 @@ abstract class BaseViewModel : ViewModel() {
             _snackBarMessage.value = null
         }
     }
+    protected fun navigate(navigationTo: Navigation) {
+        _navigation.value = BaseStateContent(content = navigationTo)
+    }
+
+    protected fun showSnackBarMessage(message: TypeMessage) {
+        _snackBarMessage.value = BaseStateContent(content = message)
+    }
+
+    private fun setShowBlockProgress(show: Boolean) {
+        _progressBar.value = show
+    }
+
+
+    protected fun showBlockProgressBar() {
+        setShowBlockProgress(true)
+    }
+
+
+    protected fun hideBlockProgressBar() {
+        setShowBlockProgress(false)
+    }
+
+    fun showSimpleDialog(
+        title: TypeMessage? = null,
+        message: TypeMessage,
+        okActionBlock: (() -> Unit)? = null,
+        dismissActionBlock: (() -> Unit)? = null
+    ) {
+        _simpleDialog.value = SimpleDialog.build(
+            title,
+            message,
+            dismissSimpleBuild(okActionBlock),
+            dismissSimpleBuild(dismissActionBlock)
+        )
+    }
+
+
+    private fun dismissSimpleBuild(dismissActionBlock: (() -> Unit)? = null): () -> Unit {
+        return {
+            dismissActionBlock?.invoke()
+            _simpleDialog.value = null
+        }
+    }
+
+    fun showChoseDialog(
+        title: TypeMessage? = null,
+        message: TypeMessage,
+        ok: TypeMessage,
+        cancel: TypeMessage,
+        okActionBlock: (() -> Unit)? = null,
+        cancelActionBlock: (() -> Unit)? = null,
+        dismissActionBlock: (() -> Unit)? = null
+    ) {
+        _chooseDialog.value =
+            ChooseDialog.build(
+                title,
+                message,
+                ok,
+                cancel,
+                dismissChoseBuild(okActionBlock),
+                dismissChoseBuild(cancelActionBlock),
+                dismissChoseBuild(dismissActionBlock),
+            )
+    }
+
+
+    private fun dismissChoseBuild(dismissActionBlock: (() -> Unit)? = null): () -> Unit {
+        return {
+            dismissActionBlock?.invoke()
+            _chooseDialog.value = null
+        }
+    }
+
 
 
 }

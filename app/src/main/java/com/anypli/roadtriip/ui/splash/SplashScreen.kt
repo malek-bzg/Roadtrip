@@ -4,7 +4,7 @@ package com.anypli.roadtriip.ui.splash
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -12,24 +12,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.anypli.roadtriip.base.BaseScreen
 import com.anypli.roadtriip.R
+import com.anypli.roadtriip.global.helper.Navigation
+import com.anypli.roadtriip.ui.event.CameraScreen
+import com.anypli.roadtriip.ui.main.AppNavigator
 
 @Composable
 fun SplashScreen(
-    viewModel: SplashViewModel
-    //navigator: DestinationsNavigator
+    viewModel: SplashViewModel ,
+    navigator: AppNavigator
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
     BaseScreen(
-        viewModel = viewModel,
-        navigationCallback = {},
+        viewModel = viewModel ,
+        navigationCallback =
+        {
+            if (it is Navigation.SigninScreen)
+                navigator.navigateTo(Navigation.SigninScreen)
+
+        } ,
         snackbarHostState = snackbarHostState
     ) { modifier ->
         SplashScreen(
-            snackbarHostState = snackbarHostState,
             modifier = modifier
         )
     }
@@ -38,7 +46,6 @@ fun SplashScreen(
 
 @Composable
 private fun SplashScreen(
-    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() } ,
     modifier: Modifier
 ) {
     Box(
@@ -49,13 +56,14 @@ private fun SplashScreen(
     )
 
     {
-        Image(painter = painterResource(id = R.drawable.ic_shape), contentDescription = "",
-            modifier = Modifier.fillMaxSize(),contentScale = ContentScale.FillBounds
+        Image(
+            painter = painterResource(id = R.drawable.ic_shape) , contentDescription = "" ,
+            modifier = Modifier.fillMaxSize() , contentScale = ContentScale.FillBounds
         )
         // Logo centré
         Image(
-            painter = painterResource(id = R.drawable.logo),
-            contentDescription = null,
+            painter = painterResource(id = R.drawable.logo) ,
+            contentDescription = null ,
             modifier = Modifier
                 .size(400.dp)
                 .align(Alignment.Center)
@@ -64,7 +72,13 @@ private fun SplashScreen(
     }
 
 
-
+}
+@Preview
+@Composable
+fun SplashScreenPreview() {
+    SplashScreen(
+        modifier = Modifier ,
+    )
 }
 
 

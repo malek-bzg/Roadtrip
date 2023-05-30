@@ -72,6 +72,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore-ktx:24.5.0'
     implementation 'androidx.navigation:navigation-runtime-ktx:2.5.3'
     testImplementation 'junit:junit:4.13.2'
+    implementation 'androidx.compose.material:material-icons-core:1.2.0'
+    implementation 'androidx.compose.material:material-icons-extended:1.2.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     //androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
@@ -91,6 +93,8 @@ dependencies {
     implementation "androidx.compose.material:material:1.0.5"
     //implementation "androidx.compose.material:material:1.0.0"
     implementation "androidx.compose.foundation:foundation-layout:1.0.4"
+    implementation 'androidx.compose.material:material-icons-core:{version}'
+    implementation 'androidx.compose.material:material-icons-extended:{version}'
 
 
 

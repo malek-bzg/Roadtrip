@@ -1,9 +1,9 @@
 package com.anypli.roadtriip.ui.shared.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Shapes
-import androidx.compose.material.Typography
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
+import androidx.compose.material3.Shapes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 
@@ -19,7 +19,14 @@ fun RoadtriipTheme(
         red = RED ,
         green = GREEN ,
         grey = GREY ,
-        yellow = YELLOW
+        yellow = YELLOW,
+        transparent = TRANSPARENT,
+        yeloows = YELOOWS,
+        yeloowsc =YELOOWSC,
+        white= WHITE,
+        greyy= GREYY
+
+
     )
 
     CompositionLocalProvider(
@@ -27,8 +34,8 @@ fun RoadtriipTheme(
 
     ) {
         MaterialTheme(
-            typography = Typography ,
-            shapes = Shapes ,
+            typography = Typography() ,
+            shapes = Shapes() ,
             content = content
         )
     }
